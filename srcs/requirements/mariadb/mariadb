@@ -3,6 +3,8 @@ FROM	alpine:3.19
 RUN	apk update && \
 	apk add --no-cache mariadb mariadb-client
 
+COPY ./conf/my.cnf /etc/my.cnf
+
 #Create necessary directory for Mariadb, chown change permissions
 RUN	mkdir -p /run/mysql && \
 	mkdir -p /var/lib/mysql && \
