@@ -18,17 +18,17 @@ RUN	apk update && apk add --no-cache \
 	bash \
 	su-exec
 
-RUN	mkdir -p /run/php-fpm
+RUN	mkdir -p /run/php-fpm /var/www
 
 COPY	./conf/www.conf /etc/php81/php-fpm.d/www.conf
 
 #Config PHP-FPM to use /run/php-fpm
 RUN	sed -i 's|^listen = 127.0.0.1:9000|listen = /run/php-fpm/php-fpm.sock|' /etc/php81/php-fpm.d/www.conf
 
-RUN	curl -o /tmp/wordpress.tar.gz -SL https:://wordpress.org/latest.tar.gz && \
+RUN	curl -o /tmp/wordpress.tar.gz -SL https://wordpress.org/latest.tar.gz && \
 	tar -xzf /tmp/wordpress.tar.gz -C /var/www/ && \
 	rm /tmp/wordpress.tar.gz && \
-	chown -R nobody:nogroup /vqr/www/wordpress
+	chown -R nobody:nogroup /var/www/wordpress
 
 EXPOSE 9000
 
