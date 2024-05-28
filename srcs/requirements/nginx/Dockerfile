@@ -1,28 +1,28 @@
-FROM alpine:3.19
+FROM	alpine:3.19
 
-#--no-cache delete temporary files.
 RUN	apk update && \
 	apk upgrade && \
-	apk add --no-cache nginx openssl
+	apk add --no-cache nginx && \
+	apk add --no-cache openssl bash
 
-#/run/nginx will stock PID files and /etc/nginx/conf.d will stock .conf supp files.
-RUN	mkdir -p /run/nginx && \
-	mkdir -p /etc/nginx/conf.d && \
-	mkdir -p /etc/nginx/certs
+RUN	mkdir -p /etc/nginx/ssl
 
-#Create a certificate auto-signed for TLS 1.3 (for test)
-RUN	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-	-keyout /etc/nginx/certs/server.key \
-	-out /etc/nginx/certs/server.crt \
-	-subj "/C=FR/ST=Denial/L=Mulhouse/0=Dis/CN=joakoeni.42.fr"
+RUN	apk add --no-cache openssl
 
-COPY	conf/nginx.conf /etc/nginx/nginx.conf
+RUN	openssl req -x509 -nodes -out /etc/nginx/ssl/inception.crt -keyout /etc/nginx/ssl/inception.key -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=joakoeni.42.fr/UID=joakoeni" && \
+	set +a
 
-COPY	conf/default.conf /etc/nginx/conf.d/default.conf
+RUN	mkdir -p /var/run/nginx && \
+	mkdir -p /var/www/html
 
-#Expose port 443 for TLS/HTTPS connexion
-EXPOSE 443
+COPY 	conf/nginx.conf /etc/nginx/nginx.conf
 
-#Start NGINX and stay in first plan
+RUN	chmod 755 /var/www/html
+
+RUN	if ! getent group www-data > /dev/null 2>&1; then addgroup -S www-data; fi && \
+	if ! getent passwd www-data > /dev/null 2>&1; then adduser -S www-data -G www-data; fi
+
+RUN	chown -R www-data:www-data /var/www/html
+
 CMD ["nginx", "-g", "daemon off;"]
 

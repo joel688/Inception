@@ -1,35 +1,60 @@
 FROM	alpine:3.19
 
-RUN	apk update && apk add --no-cache \
+RUN	apk update && \
+	apk upgrade && \
+	apk add \
+	curl \
+	mariadb-client \
 	php81 \
 	php81-fpm \
-	php81-mysqli \
 	php81-json \
-	php81-opcache \
-	php81-phar \
-	php81-mbstring \
+	php81-zlib \
 	php81-xml \
-	php81-curl \
-	php81-dom \
+	php81-xmlwriter \
+	php81-simplexml \
+	php81-pdo \
+	php81-phar \
+	php81-openssl \
+	php81-pdo_mysql \
+	php81-mysqli \
 	php81-session \
-	curl \
-	tar \
-	less \
-	bash \
-	su-exec
+	php81-gd \
+	php81-iconv \
+	php81-gmp \
+	php81-zip \
+	php81-curl \
+	php81-opcache \
+	php81-ctype \
+	php81-apcu \
+	php81-intl \
+	php81-bcmath \
+	php81-dom \
+	php81-mbstring \
+	php81-xmlreader \
+	php81-redis \
+	php81-tokenizer
+
+RUN	ln -s /usr/bin/php81 /usr/bin/php
 
 RUN	mkdir -p /run/php-fpm /var/www
 
-COPY	./conf/www.conf /etc/php81/php-fpm.d/www.conf
+RUN	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	chmod +x wp-cli.phar && \
+    	mv wp-cli.phar /usr/local/bin/wp
 
-#Config PHP-FPM to use /run/php-fpm
-RUN	sed -i 's|^listen = 127.0.0.1:9000|listen = /run/php-fpm/php-fpm.sock|' /etc/php81/php-fpm.d/www.conf
+COPY 	conf/php-fpm.conf /etc/php81/php-fpm.conf
+COPY 	conf/www.conf /etc/php81/php-fpm.d/www.conf
 
-RUN	curl -o /tmp/wordpress.tar.gz -SL https://wordpress.org/latest.tar.gz && \
-	tar -xzf /tmp/wordpress.tar.gz -C /var/www/ && \
-	rm /tmp/wordpress.tar.gz && \
-	chown -R nobody:nogroup /var/www/wordpress
+RUN 	wget -qO /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	chmod +x /usr/local/bin/wp
 
-EXPOSE 9000
+COPY 	conf/auto_config.sh /usr/local/bin/auto_config.sh
+RUN 	chmod +x /usr/local/bin/auto_config.sh
 
-CMD ["php-fpm81", "-F"]
+RUN 	mkdir -p /run/php
+
+ENV PATH="/usr/bin/php81:/usr/sbin:$PATH"
+
+RUN	adduser --disabled-password --gecos '' nginx
+
+CMD	["/bin/sh", "/usr/local/bin/auto_config.sh"]
