@@ -5,15 +5,14 @@ RUN	apk update && \
 	apk add --no-cache mariadb mariadb-client bash
 
 RUN	mkdir -p /var/run/mysqld && \
-	chmod 777 /var/run/mysqld && \
+	mkdir -p /etc/mysql && \
+	mkdir -p /var/lib/mysql && \
 	chown -R mysql:mysql /var/run/mysqld && \
-	touch /var/run/mysqld/mysqld.sock && \
-	mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
+	chown -R mysql:mysql /etc/mysql/ && \
+	chown -R mysql:mysql /var/lib/mysql
 
-COPY	/tools/mariadb.sh /usr/local/bin/setup_db.sh
+COPY	conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
+COPY	tools/launch.sh /launch.sh
+RUN	chmod 777 launch.sh
 
-RUN	chmod +x /usr/local/bin/setup_db.sh
-
-COPY	conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
-
-CMD	["/usr/local/bin/setup_db.sh"]
+ENTRYPOINT	["bash",  "/launch.sh"]
