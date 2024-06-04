@@ -1,7 +1,7 @@
 start:
 	@mkdir -p /home/joakoeni/test/data/mariadb
 	@mkdir -p /home/joakoeni/test/data/wordpress
-	@docker compose -f ./srcs/docker-compose.yml up -d --build
+	@docker compose -f ./srcs/docker-compose.yml up --build
 
 stop:
 	@docker compose -f ./srcs/docker-compose.yml down

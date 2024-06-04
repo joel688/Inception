@@ -29,4 +29,4 @@ if [ -f "$WP_PATH"/wp-config.php ];
 fi
 
 echo "running php-fpm"
-/usr/sbin/php-fpm7.3 -F
+/usr/sbin/php-fpm81 -F
