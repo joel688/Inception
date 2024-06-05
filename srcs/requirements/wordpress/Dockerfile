@@ -1,5 +1,14 @@
 FROM	alpine:3.19
 
+ARG	DOMAIN_NAME
+ARG	DB_NAME
+ARG	DB_USER
+ARG	DB_USER_PASSWORD
+ARG	WP_ADMIN
+ARG	WP_ADMIN_PASSWORD
+ARG	WP_USER
+ARG	WP_USER_PASSWORD
+
 RUN	apk update && \
 	apk upgrade && \
 	apk add --no-cache \
@@ -36,16 +45,18 @@ RUN	apk update && \
 	php81-redis \
 	php81-tokenizer
 
-RUN ln -s /usr/bin/php81 /usr/local/bin/php
-COPY conf/php.ini /etc/php81/cli/php.ini
+RUN	ln -s /usr/bin/php81 /usr/local/bin/php
 
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp
+COPY	./conf/wp-config.php /
+COPY	./tools/setup.sh /
+COPY	./tools/setup2.sh /
+COPY	./conf/www.conf /etc/php81/php-fpm.d/
+RUN	chmod +x setup.sh && ./setup.sh
+RUN	chmod +x setup2.sh
 
-COPY tools/autoconf.sh /autoconf.sh
+RUN	mkdir -p /run/php
 
-RUN mkdir -p /run/php
+EXPOSE	9000
 
-ENTRYPOINT ["bash", "autoconf.sh"]
+ENTRYPOINT	["/bin/sh", "/setup2.sh"]
 

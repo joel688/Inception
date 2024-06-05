@@ -4,7 +4,6 @@ RUN	apk upgrade && \
 	apk update && \
 	apk add\
 	nginx \
-	vim \
 	curl
 
 RUN	mkdir -p /etc/nginx/ssl && \
