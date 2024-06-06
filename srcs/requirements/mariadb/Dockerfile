@@ -23,6 +23,8 @@ COPY	conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
 COPY	tools/launch.sh /launch.sh
 RUN	chmod 777 launch.sh
 RUN	./launch.sh
-RUN	env >> toto
+RUN	env > toto
+
+EXPOSE	3306
 
 ENTRYPOINT	["mysqld",  "--user=mysql"]

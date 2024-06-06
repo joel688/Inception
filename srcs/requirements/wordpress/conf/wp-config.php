@@ -13,7 +13,7 @@ define('DB_USER', 'TEMP_DB_USER');
 define('DB_PASSWORD', 'TEMP_DB_USER_PASSWORD');
 
 /** MySQL hostname */
-define('DB_HOST', 'inception_db');
+define('DB_HOST', 'TEMP_DB_HOST');
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');

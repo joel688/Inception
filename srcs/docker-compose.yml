@@ -16,8 +16,8 @@ services:
     networks:
       - inception
     restart: on-failure
-    expose:
-      - "3306"
+    ports:
+      - "3306:3306"
 
   nginx:
     container_name: nginx
@@ -42,8 +42,9 @@ services:
       dockerfile: Dockerfile
       args:
         - DOMAIN_NAME=$DOMAIN_NAME
-        - DB_NAME= "inception"
+        - DB_NAME= $DB_NAME
         - DB_USER=$DB_USER
+        - DB_HOST=$DB_HOST
         - DB_USER_PASSWORD=$DB_USER_PASSWORD
         - WP_ADMIN=$WP_ADMIN
         - WP_ADMIN_PASSWORD=$WP_ADMIN_PASSWORD
