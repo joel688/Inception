@@ -48,7 +48,7 @@ RUN	apk update && \
 
 RUN	ln -s /usr/bin/php81 /usr/local/bin/php
 
-COPY	./conf/wp-config.php /
+COPY	./conf/wp-config.php .
 COPY	./tools/setup.sh /
 COPY	./tools/setup2.sh /
 COPY	./conf/www.conf /etc/php81/php-fpm.d/

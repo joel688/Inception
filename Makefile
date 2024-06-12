@@ -13,3 +13,7 @@ clean: stop
 	@docker image prune -af
 	@docker volume rm srcs_wordpress
 	@docker volume rm srcs_mariadb
+
+network:
+	sudo echo "127.0.0.1 joakoeni.42.fr" >> /etc/hosts
+	sudo systemctl restart NetworkManager

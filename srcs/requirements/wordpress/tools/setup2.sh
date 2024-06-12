@@ -1,6 +1,6 @@
 #!/bin/sh
 
-until mysqladmin ping --user="${DB_USER}" --password="${DB_USER_PASSWORD}" --host="${DB_NAME}" 2>/dev/null
+until mysqladmin ping --user="${DB_USER}" --password="${DB_USER_PASSWORD}" --host="${DB_HOST}" 2>/dev/null
 do
 	echo "WAITING FOR MARIADB"
 	sleep 5
@@ -20,4 +20,3 @@ if ! wp core is-installed --path=/var/www/html; then
 fi
 
 php-fpm81 -F
-

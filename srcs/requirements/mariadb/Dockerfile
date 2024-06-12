@@ -1,5 +1,6 @@
 FROM	alpine:3.19
 
+EXPOSE	3306
 ARG	DB_NAME
 ARG	DB_USER
 ARG	DB_USER_PASSWORD
@@ -19,12 +20,9 @@ RUN	mkdir -p /var/run/mysqld && \
 	chown -R mysql:mysql /var/lib/mysql && \
 	mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
 
-COPY	conf/50-server.cnf	/etc/mysql/mariadb.conf.d/50-server.cnf
-COPY	tools/launch.sh /launch.sh
+COPY	conf/50-server.cnf	/etc/mysql/my.cnf
+COPY	tools/launch.sh .
 RUN	chmod 777 launch.sh
 RUN	./launch.sh
-RUN	env > toto
-
-EXPOSE	3306
 
 ENTRYPOINT	["mysqld",  "--user=mysql"]
